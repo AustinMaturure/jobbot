@@ -1,0 +1,2 @@
+def scrapeSite(request):
+    pass
