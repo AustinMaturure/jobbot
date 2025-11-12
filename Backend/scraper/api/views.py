@@ -6,12 +6,18 @@ from firecrawl import Firecrawl
 from listings.models import Job
 from datetime import datetime
 from django.utils import timezone
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 @api_view(['GET']) 
 @permission_classes([AllowAny]) 
 def scrapeSite(request):
-    firecrawl = Firecrawl(api_key="fc-60ea6045cd414cdea959e15da3407e81")
+
+   
+    firecrawl = Firecrawl(api_key=os.getenv("FIREWALL_API_KEY"))
 
     schema = {
         "type": "object",
