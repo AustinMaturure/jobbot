@@ -53,7 +53,7 @@ def scrapeSite(request):
     """
 
     res = firecrawl.extract(
-        urls=["https://mavenmachines.com/*"],
+        urls=["http://vmware.com/*"],
         prompt=prompt,
         schema=schema,
     )
