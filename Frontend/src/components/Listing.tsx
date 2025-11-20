@@ -6,7 +6,7 @@ import location from "../assets/location.svg"
 import cross from "../assets/cross.svg"
 import { pastelColorFromString } from "../utils/formatters";
 import { formatDate } from "../utils/formatters";
-import { listingAge } from "../utils/filters";
+import { listingAge, listingSeniority, listingType } from "../utils/filters";
 
 export default function Listing() {
   const [listings, setListings] = useState<any[]>([]);
@@ -40,8 +40,10 @@ export default function Listing() {
       return;
     }
     const results = listings.filter(job =>
-      job.title.toLowerCase().includes(value.toLowerCase())
+      job.title.toLowerCase().includes(value.toLowerCase()) ||
+      job.company.toLowerCase().includes(value.toLowerCase())
     );
+    
 
     setFiltered(results);
   }
@@ -51,6 +53,8 @@ export default function Listing() {
     setQuery("")
 
   }
+
+  
 
   const handleAgeFilter = (selectedOption: any) => {
     if (!selectedOption || selectedOption.label == "All") {
@@ -68,11 +72,37 @@ export default function Listing() {
     setFiltered(results);
   };
 
+  const handleTypeFilter = (selectedOption: any) => {
+    if (!selectedOption || selectedOption.label == "All") {
+      setFiltered(listings);
+      return;
+    }
+  
+    const results = listings.filter(job => job.length.includes(selectedOption.label))
+  
+    setFiltered(results);
+  };
+
+  const handleSeniorityFilter = (selectedOption: any) => {
+    if (!selectedOption || selectedOption.label == "All") {
+      setFiltered(listings);
+      return;
+    }
+  
+    const results = listings.filter(job => job.seniority.includes(selectedOption.label))
+  
+    setFiltered(results);
+  };
+
   return (
     <>
     <div className="flex justify-between items-center mb-4">
       <div>
-      {listingAge(handleAgeFilter)}
+        <div className="flex gap-2">
+        {listingAge(handleAgeFilter)}
+        {listingType(handleTypeFilter)}
+        {listingSeniority(handleSeniorityFilter)}
+        </div>
       </div>
       <div className="flex items-center gap-2">
         <button className={`transition-all duration-125 ${query != ""?"translate-x-0":"translate-x-[120%] "}`} onClick={clearSearch}><img src={cross} alt="Clear search box" className="w-12"/></button>
