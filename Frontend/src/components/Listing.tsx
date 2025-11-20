@@ -4,9 +4,9 @@ import linkArrowUp from '../assets/link-up-arrow.svg'
 import clock from "../assets/clock.svg"
 import location from "../assets/location.svg"
 import cross from "../assets/cross.svg"
-
 import { pastelColorFromString } from "../utils/formatters";
 import { formatDate } from "../utils/formatters";
+import { listingAge } from "../utils/filters";
 
 export default function Listing() {
   const [listings, setListings] = useState<any[]>([]);
@@ -52,11 +52,27 @@ export default function Listing() {
 
   }
 
+  const handleAgeFilter = (selectedOption: any) => {
+    if (!selectedOption || selectedOption.label == "All") {
+      setFiltered(listings);
+      return;
+    }
+  
+    const cutoff = new Date(selectedOption.value);
+  
+    const results = listings.filter(job => {
+      const jobDate = new Date(job.date);
+      return jobDate >= cutoff;
+    });
+  
+    setFiltered(results);
+  };
+
   return (
     <>
-    <div className="flex justify-between mb-4">
+    <div className="flex justify-between items-center mb-4">
       <div>
-
+      {listingAge(handleAgeFilter)}
       </div>
       <div className="flex items-center gap-2">
         <button className={`transition-all duration-125 ${query != ""?"translate-x-0":"translate-x-[120%] "}`} onClick={clearSearch}><img src={cross} alt="Clear search box" className="w-12"/></button>
