@@ -19,7 +19,7 @@ export default function Upload(){
         setWebsite(e.target.value)
     }
 
-    // NEW: Parse CSV/XLSX File
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -31,15 +31,15 @@ export default function Upload(){
         try {
             let urls: string[] = [];
 
-            // Read file buffer
+          
             const data = await file.arrayBuffer();
             const workbook = XLSX.read(data);
 
-            // CSV or Excel sheet to JSON rows
+           
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-            // Extract possible URLs
+           
             json.forEach((row: any) => {
                 row.forEach((cell: any) => {
                     if (typeof cell === "string" && cell.includes(".")) {
@@ -121,7 +121,7 @@ export default function Upload(){
         <h1 className="font-bold text-2xl"> Enter website addresses to <span className="italic">crawl</span></h1>
         <p className="text-sm mb-3">tip: {tip}</p>
         
-        {/* TEXT INPUT */}
+
         <input 
             type="text" 
             onChange={handleChange} 
@@ -131,17 +131,18 @@ export default function Upload(){
         />
 
 
-        {/* NEW: FILE UPLOAD SECTION */}
+  
         {sites.length === 0 && (
-            <div className="mt-3 space-y-2">
-                <p className="text-xs text-neutral-600">
+            <div className="mt-3 flex items-center ">
+                <p className="text-xs text-neutral-600 ">
                     Or upload a CSV/XLSX file
                 </p>
                 <input 
                     type="file"
                     accept=".csv, .xlsx, .xls"
                     onChange={handleFileUpload}
-                    className="w-full text-sm"
+                    
+                    className="p-2 rounded-3xl text-sm underline cursor-pointer"
                 />
                 {fileError && (
                     <p className="text-red-600 text-xs">{fileError}</p>
@@ -158,7 +159,7 @@ export default function Upload(){
         </div>
         </form>
 
-        {/* CRAWLING INDICATOR */}
+      
         {sites.length > 0 && (
                 <div className="p-6 bg-gray-50 rounded-xl space-y-3 w-full mt-6">
               

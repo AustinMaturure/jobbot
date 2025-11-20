@@ -132,7 +132,10 @@ export default function Listing() {
                
               </div>
              
-              <p className="text-black line-clamp-1">{job.description}</p>
+              <p className="text-black mt-1 line-clamp-1 transition-all duration-100 hover:line-clamp-none">
+                {job.description}
+              </p>
+
               <div className="flex text-black gap-2 mt-3 items-center">
               <div>
                  <p className="font-bold text-sm">{job.seniority}</p> 
@@ -146,7 +149,10 @@ export default function Listing() {
                     <h1 className="l text-sm">{job.location}</h1>
                 </div>
                 <div>
-                <p style={{color:`${formatDate(job.date).text}`, backgroundColor:`${formatDate(job.date).bg}`}} className="text-sm p-1 rounded-lg">{job.date ? formatDate(job.date).date:""}</p>
+                  <p style={{color:`${formatDate(job.date).text}`, backgroundColor:`${formatDate(job.date).bg}`}} className="text-sm p-1 rounded-lg">{job.date ? formatDate(job.date).date:""}</p>
+                </div>
+                <div>
+                  <p>{job.department}</p>
                 </div>
               
                 
