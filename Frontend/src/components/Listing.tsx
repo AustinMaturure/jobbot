@@ -8,7 +8,9 @@ import { formatDate } from "../utils/formatters";
 
 export default function Listing() {
   const [listings, setListings] = useState<any[]>([]);
+  const [filtered, setFiltered] = useState<any[]>([]);
   const [message, setMessage] = useState("Find Jobs");
+  const [query, setQuery] = useState("");
   const [loading, setLoading ] = useState(false);
 
   const getData = async () => {
@@ -16,6 +18,7 @@ export default function Listing() {
     const data = await getListings();
     if (data.success) {
       setListings(data.data); 
+      setFiltered(data.data);
       setLoading(false)
     } else {
       console.error(data.error);
@@ -26,16 +29,40 @@ export default function Listing() {
   useEffect(() => {
     getData();
   }, []);
+ 
+  const handleChange = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    const value = event.target.value;
+    setQuery(event.target.value)
+    if (value.trim() === "") {
+      setFiltered(listings);      
+      return;
+    }
+    const results = listings.filter(job =>
+      job.title.toLowerCase().includes(value.toLowerCase())
+    );
 
+    setFiltered(results);
+  }
   
 
   return (
     <>
+    <div className="flex justify-between mb-4">
+      <div>
+
+      </div>
+      <div>
+        <button>x</button>
+        <input type="text" placeholder="Search for listing..." className="bg-gray-50 placeholder-gray-500 border-0 p-4 rounded-3xl" value={query} onChange={handleChange} />
+      </div>
+
+
+    </div>
       {listings.length === 0 ? (
         <p>Loading...</p>
       ) : (
         <div className="space-y-2 bg-white rounded-2xl p-4">
-          {listings.map((job: any, index: number) => (
+          {filtered.map((job: any, index: number) => (
             <div
               key={index}
               className="p-4 pl-0 border-b-1 border-neutral-900 flex justify-between gap-2"

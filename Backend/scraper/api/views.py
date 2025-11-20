@@ -12,12 +12,14 @@ import os
 load_dotenv()
 
 
-@api_view(['GET']) 
+@api_view(['POST']) 
 @permission_classes([AllowAny]) 
 def scrapeSite(request):
 
+
    
-    firecrawl = Firecrawl(api_key=os.getenv("FIREWALL_API_KEY"))
+    firecrawl = Firecrawl(api_key=os.getenv("FIRECRAWL_API_KEY"))
+    websites = request.data.get("websites")
 
     schema = {
         "type": "object",
@@ -48,7 +50,7 @@ def scrapeSite(request):
     Extract all job openings listed.
     For each job, include:
     - title
-    - location (if available)
+    - location (if available , remote or on location etc. if provided the actual location)
     - department (if shown, else deduce it from the title)
     - date (the date the listing was posted)
     - description (if available)
@@ -58,15 +60,23 @@ def scrapeSite(request):
     - company (the company which the role is for)
     """
 
-    res = firecrawl.extract(
-        urls=["http://vmware.com/*"],
-        prompt=prompt,
-        schema=schema,
-    )
+    print("Crawling...")
 
-    jobs = res.data.get("jobs", [])
+    all_jobs = []
+    print(websites)
+  
+    for website in websites:
+        res = firecrawl.extract(
+            urls=[f"{website}/*"],
+            prompt=prompt,
+            schema=schema,
+        )
+        jobs = res.data.get("jobs", [])
+        all_jobs.extend(jobs)
 
-    for listing in jobs:
+
+
+    for listing in all_jobs:
         # Parse the date safely
         raw_date = listing.get("date")
         parsed_date = None
@@ -78,20 +88,24 @@ def scrapeSite(request):
             except Exception:
                 parsed_date = None
 
-        Job.objects.create(
+   
+        Job.objects.get_or_create(
             title=listing.get("title"),
-            location=listing.get("location"),
-            department=listing.get("department"),
-            date=parsed_date,
-            description=listing.get("description"),
-            link=listing.get("jobLink"),
-            seniority=listing.get("seniority"),
-            length=listing.get("type"),
             company=listing.get("company"),
+            link=listing.get("jobLink"),
+
+            defaults={
+                "location": listing.get("location"),
+                "department": listing.get("department"),
+                "date": parsed_date,
+                "description": listing.get("description"),
+                "seniority": listing.get("seniority"),
+                "length": listing.get("type"),
+            }
         )
 
     
 
     print(res.data)
 
-    return Response({"data": res.data}, status=status.HTTP_200_OK)
+    return Response({"data": len(all_jobs)}, status=status.HTTP_200_OK)
