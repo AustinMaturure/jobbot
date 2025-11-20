@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import linkArrowUp from '../assets/link-up-arrow.svg'
 import clock from "../assets/clock.svg"
 import location from "../assets/location.svg"
+import cross from "../assets/cross.svg"
+
 import { pastelColorFromString } from "../utils/formatters";
 import { formatDate } from "../utils/formatters";
 
@@ -44,6 +46,11 @@ export default function Listing() {
     setFiltered(results);
   }
   
+  const clearSearch = ()=>{
+    setFiltered(listings); 
+    setQuery("")
+
+  }
 
   return (
     <>
@@ -51,15 +58,18 @@ export default function Listing() {
       <div>
 
       </div>
-      <div>
-        <button>x</button>
-        <input type="text" placeholder="Search for listing..." className="bg-gray-50 placeholder-gray-500 border-0 p-4 rounded-3xl" value={query} onChange={handleChange} />
+      <div className="flex items-center gap-2">
+        <button className={`transition-all duration-125 ${query != ""?"translate-x-0":"translate-x-[120%] "}`} onClick={clearSearch}><img src={cross} alt="Clear search box" className="w-12"/></button>
+        <input type="text" placeholder="Search for listing..." className="bg-gray-50 z-10 placeholder-gray-500 border-0 p-4 rounded-3xl" value={query} onChange={handleChange} />
       </div>
 
 
     </div>
       {listings.length === 0 ? (
-        <p>Loading...</p>
+        <div className="bg-gray-300 w-90vw h-[85%] rounded-3xl flex justify-center items-center">
+          <h1>loading...</h1>
+
+        </div>
       ) : (
         <div className="space-y-2 bg-white rounded-2xl p-4">
           {filtered.map((job: any, index: number) => (
